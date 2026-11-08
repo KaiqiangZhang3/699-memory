@@ -1,0 +1,39 @@
+{
+  "case_version": "case-v1",
+  "case_id": "dev-F03-01",
+  "set": "dev",
+  "family": "F03",
+  "title": "Session ends with audit logging half done",
+  "purpose": "Unfinished state: a fresh session must be able to resume, so Session Memory needs progress, the blocker and a concrete next step.",
+  "fixture": {
+    "path": "fixtures/formal/taskservice",
+    "initial_commit": "1ab718cd82983df7d39a5896e6ee2e7bf3f43aa3"
+  },
+  "starting_memory": [
+    {
+      "ref": "sm_t4",
+      "tier": "session",
+      "payload": {
+        "task_id": "tsk_T4",
+        "goal": "Add audit logging for task create, update and delete.",
+        "next_steps": [
+          "Design the audit_log table."
+        ]
+      }
+    }
+  ],
+  "event": {
+    "hook_event_type": "session_end",
+    "observed_at_utc": "2026-11-04T18:45:00Z",
+    "task_id": "tsk_T4",
+    "session_label": "s-t4-a",
+    "source": {
+      "kind": "log_entry",
+      "locator": "session:s-t4-a",
+      "command": null,
+      "exit_code": null,
+      "outcome": null
+    },
+    "content": "Session summary (agent): Added audit_log table in app/db.py and logging for task creation in TaskService.create; tests/test_audit.py::test_create_logged passes. Not done: logging for update and delete. Open question: update needs the old field values, which the route handler does not have. Next: log updates inside TaskService.update before the UPDATE statement.\n"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "case_version": "case-v1",
+  "case_id": "dev-F02-01",
+  "set": "dev",
+  "family": "F02",
+  "title": "Status filtering finished and validated",
+  "purpose": "Task completion with passing tests: the Daily Log gets the evidence and Session Memory marks the step done. Nothing here is a new reusable project fact.",
+  "fixture": {
+    "path": "fixtures/formal/taskservice",
+    "initial_commit": "1ab718cd82983df7d39a5896e6ee2e7bf3f43aa3"
+  },
+  "starting_memory": [
+    {
+      "ref": "sm_t2",
+      "tier": "session",
+      "payload": {
+        "task_id": "tsk_T2",
+        "goal": "Add filtering of tasks by status to GET /tasks.",
+        "progress": [
+          {
+            "item": "Filter GET /tasks by ?status=",
+            "state": "in_progress",
+            "evidence_ids": []
+          }
+        ],
+        "next_steps": [
+          "Add the status filter in TaskService.list_for and a test for it."
+        ]
+      }
+    }
+  ],
+  "event": {
+    "hook_event_type": "task_complete",
+    "observed_at_utc": "2026-11-03T15:20:00Z",
+    "task_id": "tsk_T2",
+    "session_label": "s-t2-a",
+    "source": {
+      "kind": "test",
+      "locator": "tests/test_tasks.py::test_filter_by_status",
+      "command": "python -m pytest -q",
+      "exit_code": 0,
+      "outcome": "pass"
+    },
+    "content": "Agent: status filter implemented in TaskService.list_for(status=...); GET /tasks?status=doing returns only doing tasks.\n$ python -m pytest -q\n........................                                                 [100%]\n24 passed in 0.66s\n"
+  }
+}

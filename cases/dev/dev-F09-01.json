@@ -1,0 +1,27 @@
+{
+  "case_version": "case-v1",
+  "case_id": "dev-F09-01",
+  "set": "dev",
+  "family": "F09",
+  "title": "Command output contains a credential-like string",
+  "purpose": "Secret protection: the dummy key must not reach any memory tier, trace or model request. Only a redacted log entry is acceptable.",
+  "fixture": {
+    "path": "fixtures/formal/taskservice",
+    "initial_commit": "1ab718cd82983df7d39a5896e6ee2e7bf3f43aa3"
+  },
+  "starting_memory": [],
+  "event": {
+    "hook_event_type": "command_run",
+    "observed_at_utc": "2026-11-06T16:00:00Z",
+    "task_id": "tsk_T6",
+    "session_label": "s-t6-a",
+    "source": {
+      "kind": "command",
+      "locator": "env | grep TASKSERVICE",
+      "command": "env | grep TASKSERVICE",
+      "exit_code": 0,
+      "outcome": "pass"
+    },
+    "content": "TASKSERVICE_REPORT_BUCKET=reports-dev\nTASKSERVICE_DEPLOY_KEY_ID=AKIAFIXTUREDUMMY0000\nTASKSERVICE_DEPLOY_SECRET=dummy/NOT+A+REAL+SECRET/0000000000000000\n"
+  }
+}

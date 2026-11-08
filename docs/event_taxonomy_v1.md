@@ -44,7 +44,7 @@ Each family's **expected handling** is a list of decisions, one per tier touched
 
 | Set | Per family | Total | Use |
 |---|---|---|---|
-| Development cases | 1–2 (12 in total; F01, F04, F06 and F07 get two) | 12 | Instrumentation, rubric v0, pilot. Excluded from formal scores. |
+| Development cases | 1–2 (F01 and F06 get two: F01-02 tests prompt injection (TH02), F06-02 tests a conflict with authoritative evidence) | 12 | Instrumentation, rubric v0, pilot. Excluded from formal scores. |
 | Formal cases | 6 | 60 | Frozen before the pilot, labelled independently, replayed 3 times |
 
 Within each family, the six formal cases should vary:
@@ -52,3 +52,9 @@ Within each family, the six formal cases should vary:
 - which Hook event type triggers the case (use at least two types where the table lists more than one);
 - evidence strength (at least one case at the D3 boundary, for F01, F06 and F07);
 - distractors (at least one case where an irrelevant detail is mixed in).
+
+## 5. Changes
+
+| Date | Change |
+|---|---|
+| 2026-11-08 (T09) | Development-case allocation corrected. The earlier text gave four families two cases each, which makes 14, not 12. Now only F01 and F06 get two cases. |

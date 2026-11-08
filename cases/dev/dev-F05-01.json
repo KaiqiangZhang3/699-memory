@@ -1,0 +1,46 @@
+{
+  "case_version": "case-v1",
+  "case_id": "dev-F05-01",
+  "set": "dev",
+  "family": "F05",
+  "title": "The same test run delivered twice",
+  "purpose": "Idempotency: the Hook retries an event that is already in the Daily Log. Exactly one canonical entry may exist.",
+  "fixture": {
+    "path": "fixtures/formal/taskservice",
+    "initial_commit": "1ab718cd82983df7d39a5896e6ee2e7bf3f43aa3"
+  },
+  "starting_memory": [
+    {
+      "ref": "dl_first",
+      "tier": "daily_log",
+      "payload": {
+        "entry_type": "test_result",
+        "summary": "Full suite passed (22 tests) at the fixture's initial commit.",
+        "dedup_key": "$EVENT_DEDUP_KEY",
+        "evidence": [
+          {
+            "label": "first_delivery",
+            "kind": "test",
+            "locator": "tests/",
+            "outcome": "pass"
+          }
+        ],
+        "task_id": "tsk_T1"
+      }
+    }
+  ],
+  "event": {
+    "hook_event_type": "test_run",
+    "observed_at_utc": "2026-11-02T10:00:30Z",
+    "task_id": "tsk_T1",
+    "session_label": "s-t1-a",
+    "source": {
+      "kind": "test",
+      "locator": "tests/",
+      "command": "python -m pytest -q",
+      "exit_code": 0,
+      "outcome": "pass"
+    },
+    "content": "$ python -m pytest -q\n......................                                                   [100%]\n22 passed in 0.61s\n"
+  }
+}

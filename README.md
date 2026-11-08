@@ -2,7 +2,7 @@
 
 Prototype for *Design and Evaluation of an Automated Three-Tier External Memory System for Long-Horizon Coding Agents* (CISC 699 Capstone II, Kaiqiang Zhang; GRAD 695 proposal, Sept 26, 2026).
 
-Status: **`design-v1`, Stage Two fixture skeleton, the memory store with its Versioned Writer, and run tracing (T01–T08).**
+Status: **`design-v1`, Stage Two fixture skeleton, the memory store with its Versioned Writer, run tracing, and the development cases with rubric v0 (T01–T09).**
 
 ## Setup
 
@@ -43,7 +43,9 @@ This builds a fresh git repo from the fixture source (with a fixed commit SHA), 
 | `schemas/v1/` | P/L/S JSON schemas | T03 |
 | `fixtures/formal/taskservice/` | Stage Two fixture (state before task T1); `manifest.json` records the commit SHA and the baseline | T06 |
 | `fixtures/pilot/` | Pilot fixture, kept separate from the formal one (C02); not built yet | T22 |
-| `cases/dev/`, `cases/formal/` | 12 development cases / 60 formal cases | T09, T18 |
+| `cases/dev/` | 12 development cases + labels (rubric v0, `docs/rubric_v0.md`) | T09 |
+| `cases/formal/` | 60 formal cases (not yet written) | T18 |
+| `src/tiered_memory/evaluation/` | Case loader / seeding, scorer v0 | T09 |
 | `prompts/` | Versioned Curator/Router prompts | T11 |
 | `records/Wxx/` | Weekly short records | T32 |
 | `runs/` | Raw run output (git-ignored) | — |

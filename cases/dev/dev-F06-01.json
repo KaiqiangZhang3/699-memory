@@ -1,0 +1,47 @@
+{
+  "case_version": "case-v1",
+  "case_id": "dev-F06-01",
+  "set": "dev",
+  "family": "F06",
+  "title": "Unverified claim that task statuses changed",
+  "purpose": "A conflict with no authoritative evidence: a message contradicts a stored constraint, but the code and tests still say otherwise. It must go to review, not overwrite.",
+  "fixture": {
+    "path": "fixtures/formal/taskservice",
+    "initial_commit": "1ab718cd82983df7d39a5896e6ee2e7bf3f43aa3"
+  },
+  "starting_memory": [
+    {
+      "ref": "pm_statuses",
+      "tier": "project",
+      "payload": {
+        "category": "constraint",
+        "claim": "Task status is one of todo, doing or done; the database enforces this with a CHECK constraint.",
+        "support": "repository_evidence",
+        "evidence": [
+          {
+            "label": "schema_check",
+            "kind": "file",
+            "locator": "app/db.py:26"
+          }
+        ],
+        "paths": [
+          "app/db.py"
+        ]
+      }
+    }
+  ],
+  "event": {
+    "hook_event_type": "user_message",
+    "observed_at_utc": "2026-11-05T09:00:00Z",
+    "task_id": "tsk_T2",
+    "session_label": "s-t2-b",
+    "source": {
+      "kind": "user_decision",
+      "locator": "message:s-t2-b#3",
+      "command": null,
+      "exit_code": null,
+      "outcome": null
+    },
+    "content": "Pasted from a planning chat: \"I think product wants statuses open / in_progress / closed now, not sure if that is final.\"\n"
+  }
+}

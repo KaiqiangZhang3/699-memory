@@ -1,0 +1,39 @@
+{
+  "case_version": "case-v1",
+  "case_id": "dev-F04-01",
+  "set": "dev",
+  "family": "F04",
+  "title": "Permission fix in the route handler fails",
+  "purpose": "Experiential memory: the failed approach and its failing test must be kept so the same approach is not retried (Stage Two task T3).",
+  "fixture": {
+    "path": "fixtures/formal/taskservice",
+    "initial_commit": "1ab718cd82983df7d39a5896e6ee2e7bf3f43aa3"
+  },
+  "starting_memory": [
+    {
+      "ref": "sm_t3",
+      "tier": "session",
+      "payload": {
+        "task_id": "tsk_T3",
+        "goal": "Fix the defect that lets a member edit another member's task.",
+        "next_steps": [
+          "Write a failing test for PATCH by a non-owner."
+        ]
+      }
+    }
+  ],
+  "event": {
+    "hook_event_type": "test_run",
+    "observed_at_utc": "2026-11-05T11:10:00Z",
+    "task_id": "tsk_T3",
+    "session_label": "s-t3-a",
+    "source": {
+      "kind": "test",
+      "locator": "tests/test_tasks.py::test_admin_can_update_any_task",
+      "command": "python -m pytest -q",
+      "exit_code": 1,
+      "outcome": "fail"
+    },
+    "content": "Agent: added an owner check in app/web.py PATCH handler (compare task owner_id with user id).\n$ python -m pytest -q\n...............F........\nFAILED tests/test_tasks.py::test_admin_can_update_any_task - assert 403 == 200\n1 failed, 23 passed in 0.70s\n"
+  }
+}
