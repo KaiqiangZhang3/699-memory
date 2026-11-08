@@ -13,7 +13,7 @@ from tiered_memory.hooks.dedup import compute_dedup_key, dedup_key_for_case_even
 from tiered_memory.tracing import Run, audit_run
 
 CASES = load_cases("dev")
-LABELS = load_labels(CASES_DIR / "dev" / "labels" / "rubric-v0_kaiqiang.json")["labels"]
+LABELS = load_labels(CASES_DIR / "dev" / "labels" / "rubric-v0_claude-a.json")["labels"]
 TAXONOMY = {f["id"]: f for f in json.loads((CASES_DIR / "event_families_v1.json").read_text())["families"]}
 FIXTURE = json.loads((CASES_DIR.parent / "fixtures" / "manifest.json").read_text())["fixtures"][0]
 
@@ -155,3 +155,50 @@ def test_forbidden_string_scan(tmp_path):
     (tmp_path / "b.json").write_text('{"x": "AKIAFIXTUREDUMMY0000"}')
     hits = scan_forbidden_strings(sorted(tmp_path.iterdir()), ["AKIAFIXTUREDUMMY0000"])
     assert len(hits) == 1 and "b.json" in hits[0]
+
+
+# ---- agreement ----------------------------------------------------------------
+
+def test_agreement_with_itself_is_perfect():
+    from tiered_memory.evaluation.agreement import compare
+    labels = load_labels(CASES_DIR / "dev" / "labels" / "rubric-v0_claude-a.json")
+    r = compare(labels, labels)
+    assert r["expected_agree"] == r["answer_sets_equal"] == r["cases"] == 12
+    assert r["kappa_expected"] == 1.0
+
+
+def test_agreement_detects_a_disagreement():
+    import copy
+    from tiered_memory.evaluation.agreement import compare, to_markdown
+    a = load_labels(CASES_DIR / "dev" / "labels" / "rubric-v0_claude-a.json")
+    b = copy.deepcopy(a)
+    b["labeler"] = "other"
+    b["labels"]["dev-F06-01"]["expected"] = [L("daily_log", "append"), L("project", "supersede")]
+    b["labels"]["dev-F06-01"]["acceptable_alternatives"] = []
+    r = compare(a, b)
+    assert r["expected_agree"] == 11 and r["answer_sets_overlap"] == 11
+    assert r["kappa_expected"] < 1.0
+    row = next(x for x in r["rows"] if x["case_id"] == "dev-F06-01")
+    assert row["a_only"] == ["L append + P review?"] and row["b_only"] == ["L append + P supersede"]
+    assert "**no**" in to_markdown(r)
+
+
+def test_kappa_known_value():
+    from tiered_memory.evaluation.agreement import cohens_kappa
+    # 2x2 example: po = 0.7, pe = 0.5 -> kappa = 0.4
+    a = ["x"] * 5 + ["y"] * 5
+    b = ["x"] * 4 + ["y"] + ["x"] * 2 + ["y"] * 3
+    assert abs(cohens_kappa(a, b) - 0.4) < 1e-9
+
+
+@pytest.mark.parametrize("name", ["rubric-v0_claude-a.json", "rubric-v0_claude-b.json"])
+def test_every_label_set_is_complete_and_family_consistent(name):
+    data = load_labels(CASES_DIR / "dev" / "labels" / name)
+    assert data["labeler_kind"] in ("human", "ai") and data["labeler_note"]
+    assert set(data["labels"]) == {c["case_id"] for c in CASES}
+    for case in CASES:
+        family = TAXONOMY[case["family"]]
+        allowed = [canon(family["expected"])] + [canon(a) for a in family["acceptable_alternatives"]]
+        label = data["labels"][case["case_id"]]
+        for decisions in [label["expected"], *label["acceptable_alternatives"]]:
+            assert canon(decisions) in allowed, (name, case["case_id"])

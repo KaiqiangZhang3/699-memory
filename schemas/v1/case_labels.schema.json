@@ -5,38 +5,116 @@
   "description": "One file per labeler and rubric version. Labels are made without looking at system output (4.14). Decision lists use the same shape as cases/event_families_v1.json.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["labels_version", "rubric_version", "set", "labeler", "labeled_at_utc", "independent_of_system_output", "labels"],
+  "required": [
+    "labels_version",
+    "rubric_version",
+    "set",
+    "labeler",
+    "labeler_kind",
+    "labeler_note",
+    "labeled_at_utc",
+    "independent_of_system_output",
+    "labels"
+  ],
   "properties": {
-    "labels_version": { "const": "labels-v1" },
-    "rubric_version": { "type": "string", "pattern": "^rubric-v[0-9]+$" },
-    "set": { "enum": ["dev", "formal"] },
-    "labeler": { "type": "string", "minLength": 1 },
-    "labeled_at_utc": { "$ref": "common.schema.json#/$defs/utc_timestamp" },
-    "independent_of_system_output": { "type": "boolean" },
+    "labels_version": {
+      "const": "labels-v1"
+    },
+    "rubric_version": {
+      "type": "string",
+      "pattern": "^rubric-v[0-9]+$"
+    },
+    "set": {
+      "enum": [
+        "dev",
+        "formal"
+      ]
+    },
+    "labeler": {
+      "type": "string",
+      "minLength": 1
+    },
+    "labeler_kind": {
+      "enum": [
+        "human",
+        "ai"
+      ],
+      "description": "AI labels must be disclosed as such in every report that uses them."
+    },
+    "labeler_note": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Who labelled, what they had seen, and whether a human reviewed the labels."
+    },
+    "labeled_at_utc": {
+      "$ref": "common.schema.json#/$defs/utc_timestamp"
+    },
+    "independent_of_system_output": {
+      "type": "boolean"
+    },
     "labels": {
       "type": "object",
-      "propertyNames": { "pattern": "^(dev|formal)-F(0[1-9]|10)-[0-9]{2}$" },
+      "propertyNames": {
+        "pattern": "^(dev|formal)-F(0[1-9]|10)-[0-9]{2}$"
+      },
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["expected", "acceptable_alternatives", "forbidden", "rationale"],
+        "required": [
+          "expected",
+          "acceptable_alternatives",
+          "forbidden",
+          "rationale"
+        ],
         "properties": {
-          "expected": { "$ref": "#/$defs/decision_list" },
-          "acceptable_alternatives": { "type": "array", "items": { "$ref": "#/$defs/decision_list" } },
-          "target_ref": { "type": ["string", "null"], "description": "Seed record the change must apply to (update/supersede/archive/no_op)." },
+          "expected": {
+            "$ref": "#/$defs/decision_list"
+          },
+          "acceptable_alternatives": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/decision_list"
+            }
+          },
+          "target_ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Seed record the change must apply to (update/supersede/archive/no_op)."
+          },
           "required_claim_points": {
             "type": "array",
-            "items": { "type": "string", "minLength": 1 },
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
             "description": "What a correct Project or Session write must say. Judged by the rubric, not string-matched."
           },
-          "forbidden": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+          "forbidden": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
           "forbidden_strings": {
             "type": "array",
-            "items": { "type": "string", "minLength": 1 },
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
             "description": "Strings that must not appear anywhere in the run directory (e.g. a dummy secret)."
           },
-          "rationale": { "type": "string", "minLength": 1 },
-          "uncertain": { "type": "boolean", "description": "The labeler is not confident; flagged for adjudication." }
+          "rationale": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uncertain": {
+            "type": "boolean",
+            "description": "The labeler is not confident; flagged for adjudication."
+          }
         }
       }
     }
@@ -45,13 +123,42 @@
     "decision": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["tier", "operation", "policy_outcome"],
+      "required": [
+        "tier",
+        "operation",
+        "policy_outcome"
+      ],
       "properties": {
-        "tier": { "anyOf": [{ "$ref": "common.schema.json#/$defs/tier" }, { "const": "*" }] },
-        "operation": { "anyOf": [{ "$ref": "common.schema.json#/$defs/operation" }, { "const": "*" }] },
-        "policy_outcome": { "$ref": "common.schema.json#/$defs/policy_outcome" }
+        "tier": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/tier"
+            },
+            {
+              "const": "*"
+            }
+          ]
+        },
+        "operation": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/operation"
+            },
+            {
+              "const": "*"
+            }
+          ]
+        },
+        "policy_outcome": {
+          "$ref": "common.schema.json#/$defs/policy_outcome"
+        }
       }
     },
-    "decision_list": { "type": "array", "items": { "$ref": "#/$defs/decision" } }
+    "decision_list": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decision"
+      }
+    }
   }
 }
