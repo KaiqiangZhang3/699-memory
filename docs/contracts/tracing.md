@@ -44,7 +44,7 @@ with Run.start("runs", project_id="prj_taskservice", purpose="dev", condition="B
 | Deviation | `deviation`, also appended to `manifest.deviations` | — |
 | Run end | `run_end` | `final` |
 
-Every trace line has `seq`, UTC `at_utc`, monotonic `mono_ms`, `prev_hash` and `line_hash`. The writer for the Hook, queue, Curator, Router and Policy Gate events (`event_captured`, `candidate_queued`, `curator_output`, `routing_proposal`, `policy_decision`, `review`) already exists in the schema; T10–T13 will emit them.
+Every trace line has `seq`, UTC `at_utc`, monotonic `mono_ms`, `prev_hash` and `line_hash`. The event kinds for the Hook, queue, Curator, Router and Policy Gate (`event_captured`, `candidate_queued`, `curator_output`, `routing_proposal`, `policy_decision`, `review`) are already defined in the schema; T10–T13 will emit them.
 
 ## Manifest rules
 
