@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tiered-memory.local/schemas/v1/session_memory.schema.json",
+  "title": "Session Memory record version (S tier)",
+  "description": "Goal, progress, tentative findings, failures, blockers and next steps for one resumable logical task (Glossary). One record per task_id; each update writes a new version.",
+  "type": "object",
+  "additionalProperties": false,
+  "allOf": [{ "$ref": "common.schema.json#/$defs/version_chain" }],
+  "required": [
+    "schema_version", "tier", "project_id", "session_memory_id", "task_id", "version", "version_id", "supersedes",
+    "status", "goal", "progress", "tentative_findings", "failed_attempts", "blockers", "next_steps",
+    "evidence", "last_session_id", "content_hash", "created_at_utc", "updated_at_utc", "provenance"
+  ],
+  "properties": {
+    "schema_version": { "const": "sm-v1" },
+    "tier": { "const": "session" },
+    "project_id": { "$ref": "common.schema.json#/$defs/project_id" },
+    "session_memory_id": { "$ref": "common.schema.json#/$defs/session_memory_id" },
+    "task_id": { "$ref": "common.schema.json#/$defs/task_id" },
+    "version": true,
+    "version_id": true,
+    "supersedes": true,
+
+    "status": { "enum": ["active", "paused", "completed", "archived"] },
+    "goal": { "$ref": "common.schema.json#/$defs/nonempty_text" },
+    "progress": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["item", "state", "evidence_ids"],
+        "properties": {
+          "item": { "$ref": "common.schema.json#/$defs/nonempty_text" },
+          "state": { "enum": ["done", "in_progress", "not_started"] },
+          "evidence_ids": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/evidence_id" } }
+        },
+        "if": { "properties": { "state": { "const": "done" } } },
+        "then": { "properties": { "evidence_ids": { "minItems": 1 } } }
+      },
+      "description": "A step marked done must point to evidence (e.g. a passing test)."
+    },
+    "tentative_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["finding", "evidence_ids"],
+        "properties": {
+          "finding": { "$ref": "common.schema.json#/$defs/nonempty_text" },
+          "evidence_ids": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/evidence_id" } }
+        }
+      },
+      "description": "Unverified inferences. Promotion to Project Memory needs evidence and goes through the Policy Gate (2.6.2)."
+    },
+    "failed_attempts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["approach", "outcome", "evidence_ids", "event_id"],
+        "properties": {
+          "approach": { "$ref": "common.schema.json#/$defs/nonempty_text" },
+          "outcome": { "$ref": "common.schema.json#/$defs/nonempty_text" },
+          "evidence_ids": { "type": "array", "minItems": 1, "items": { "$ref": "common.schema.json#/$defs/evidence_id" } },
+          "event_id": { "$ref": "common.schema.json#/$defs/event_id" }
+        }
+      },
+      "description": "Failed approaches with evidence, so later sessions can avoid repeated mistakes (4.7, Task T3)."
+    },
+    "blockers": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/nonempty_text" } },
+    "next_steps": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/nonempty_text" } },
+    "evidence": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/evidence_ref" },
+      "description": "Evidence objects referenced by the evidence_ids above."
+    },
+    "last_session_id": { "$ref": "common.schema.json#/$defs/session_id" },
+    "content_hash": { "$ref": "common.schema.json#/$defs/sha256" },
+    "created_at_utc": { "$ref": "common.schema.json#/$defs/utc_timestamp" },
+    "updated_at_utc": { "$ref": "common.schema.json#/$defs/utc_timestamp" },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" }
+  },
+  "if": { "properties": { "status": { "enum": ["active", "paused"] } } },
+  "then": { "properties": { "next_steps": { "minItems": 1 } } }
+}

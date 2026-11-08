@@ -1,0 +1,43 @@
+{
+  "schema_version": "dl-v1",
+  "tier": "daily_log",
+  "project_id": "prj_taskservice",
+  "log_date": "2026-11-09",
+  "run_id": "run_3322182605da76d37631b9dc0e0e7cbf",
+  "task_id": "tsk_T3",
+  "session_id": "ses_e8bc163c82eee18733288c7d4ac636db",
+  "corrects_entry_id": null,
+  "entry_id": "log_d108618f13d03bd1fe3b6c0d712235e3",
+  "sequence": 1,
+  "recorded_at_utc": "2026-11-09T14:02:11Z",
+  "event_id": "evt_d108618f13d03bd1fe3b6c0d712235e3",
+  "dedup_key": "d108618f13d03bd1fe3b6c0d712235e3bbfc8ccc2e5ae20af46cd4a2ad475d4e",
+  "entry_type": "failure",
+  "summary": "Patch that checked ownership in the route handler failed tests/test_permissions.py::test_admin_can_edit.",
+  "evidence": [
+    {
+      "evidence_id": "evd_d108618f13d03bd1fe3b6c0d712235e3",
+      "kind": "test",
+      "locator": "tests/test_permissions.py::test_admin_can_edit",
+      "source_hash": "sha256:67e987b50b385dc4b486774f5cccad13e9e37bff1da51b7d95e67a5c0f4493a6",
+      "source_commit": "df277975d2783b0e7fd4d0487d990bd60442923c",
+      "captured_at_utc": "2026-11-09T14:02:11Z",
+      "event_id": "evt_d108618f13d03bd1fe3b6c0d712235e3",
+      "outcome": "fail",
+      "exit_code": 1
+    }
+  ],
+  "prev_entry_hash": null,
+  "provenance": {
+    "source_event_id": "evt_d108618f13d03bd1fe3b6c0d712235e3",
+    "decision_id": "dec_d108618f13d03bd1fe3b6c0d712235e3",
+    "policy_outcome": "accepted",
+    "review_id": null,
+    "operation": "append",
+    "written_at_utc": "2026-11-09T14:02:11Z",
+    "written_by": "versioned_writer",
+    "condition": "dev",
+    "run_id": "run_3322182605da76d37631b9dc0e0e7cbf"
+  },
+  "content_hash": "sha256:7e90fcb2f0dffe10260a64983fbf567238c694481b8b33e0a3740eaa8cda1531"
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "pm-v1",
+  "tier": "project",
+  "project_id": "prj_taskservice",
+  "memory_id": "mem_bdf49c3c3882102fc017ffb661108c63",
+  "version": 1,
+  "version_id": "ver_776a2e7402ac73477206daa99db01f6c",
+  "supersedes": null,
+  "category": "architecture",
+  "claim": "Authentication uses server-side session cookies; route handlers call app/services/ and never query SQLite directly.",
+  "status": "active",
+  "support": "repository_evidence",
+  "evidence": [
+    {
+      "evidence_id": "evd_08491af6454b82d847d99988ee009d8f",
+      "kind": "file",
+      "locator": "app/auth.py:12",
+      "source_hash": "sha256:fb1820897413fba8671953aff4aad5e5d59f625ef93e390f20ffc67fbb7afc65",
+      "source_commit": "df277975d2783b0e7fd4d0487d990bd60442923c",
+      "captured_at_utc": "2026-11-09T14:02:11Z",
+      "event_id": "evt_08491af6454b82d847d99988ee009d8f"
+    },
+    {
+      "evidence_id": "evd_d87c2008a8b72d077b4e6d8ab8039a7d",
+      "kind": "file",
+      "locator": "app/services/__init__.py",
+      "source_hash": "sha256:94884dd659ba0d5defc5270618aa3bced47de4af7f492a29a273935f4e6d106d",
+      "source_commit": "df277975d2783b0e7fd4d0487d990bd60442923c",
+      "captured_at_utc": "2026-11-09T14:02:11Z",
+      "event_id": "evt_d87c2008a8b72d077b4e6d8ab8039a7d"
+    }
+  ],
+  "paths": [
+    "app/auth.py",
+    "app/services/"
+  ],
+  "tags": [
+    "auth",
+    "architecture"
+  ],
+  "source_commit": "df277975d2783b0e7fd4d0487d990bd60442923c",
+  "created_at_utc": "2026-11-09T14:02:11Z",
+  "verified_at_utc": "2026-11-09T14:02:11Z",
+  "last_verification_event_id": "evt_08491af6454b82d847d99988ee009d8f",
+  "provenance": {
+    "source_event_id": "evt_776a2e7402ac73477206daa99db01f6c",
+    "decision_id": "dec_776a2e7402ac73477206daa99db01f6c",
+    "policy_outcome": "accepted",
+    "review_id": null,
+    "operation": "append",
+    "written_at_utc": "2026-11-09T14:02:11Z",
+    "written_by": "versioned_writer",
+    "condition": "dev",
+    "run_id": "run_3322182605da76d37631b9dc0e0e7cbf"
+  },
+  "content_hash": "sha256:aea269a3664c5bf988be79a9c2d5fd5514ef77f99368e69baea360ce83b5126c"
+}

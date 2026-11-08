@@ -20,6 +20,9 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Do not rely on the editable-install .pth file: macOS can flag it "hidden",
+# and Python 3.13 skips hidden .pth files.
+pythonpath = ["src"]
 addopts = "-q"
 markers = [
     "live: calls a real model API; skipped unless RUN_LIVE=1",

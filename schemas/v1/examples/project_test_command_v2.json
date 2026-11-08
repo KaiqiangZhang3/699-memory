@@ -1,0 +1,57 @@
+{
+  "schema_version": "pm-v1",
+  "tier": "project",
+  "project_id": "prj_taskservice",
+  "memory_id": "mem_ac3574f436ea027b41b36498235fda68",
+  "version": 2,
+  "version_id": "ver_f00c50a93b234734b715d6742c660d64",
+  "supersedes": "ver_db54f21fe720f8cd3f8b57334a5e6dde",
+  "category": "command",
+  "claim": "Run the full test suite with `pytest -q tests/ --ignore=tests/hidden` from the repository root.",
+  "status": "active",
+  "support": "user_approved",
+  "evidence": [
+    {
+      "evidence_id": "evd_b159c3703e30b446b277d87f812de31b",
+      "kind": "test",
+      "locator": "tests/",
+      "source_hash": "sha256:7aa9b84268fd74a8eccc492a5221b2d7813d841bd0a11098ad0f5ef567b08402",
+      "source_commit": "a549a44b3316991928c80b3bee0eb916d16c9dcc",
+      "captured_at_utc": "2026-11-12T09:30:00Z",
+      "event_id": "evt_b159c3703e30b446b277d87f812de31b",
+      "outcome": "pass",
+      "exit_code": 0
+    },
+    {
+      "evidence_id": "evd_ed58860383a097fbde33c36c8a118618",
+      "kind": "user_correction",
+      "locator": "log:log_34627e3242f2ca21f540951cb5376600",
+      "source_hash": "sha256:a565fded35555033b7b37449bf0cd1298f4ef7aad690fe45b89652439051e122",
+      "source_commit": "a549a44b3316991928c80b3bee0eb916d16c9dcc",
+      "captured_at_utc": "2026-11-12T09:30:00Z",
+      "event_id": "evt_ed58860383a097fbde33c36c8a118618"
+    }
+  ],
+  "paths": [
+    "tests/"
+  ],
+  "tags": [
+    "testing"
+  ],
+  "source_commit": "a549a44b3316991928c80b3bee0eb916d16c9dcc",
+  "created_at_utc": "2026-11-09T14:02:11Z",
+  "verified_at_utc": "2026-11-12T09:30:00Z",
+  "last_verification_event_id": "evt_b159c3703e30b446b277d87f812de31b",
+  "provenance": {
+    "source_event_id": "evt_f00c50a93b234734b715d6742c660d64",
+    "decision_id": "dec_f00c50a93b234734b715d6742c660d64",
+    "policy_outcome": "accepted",
+    "review_id": "rev_f00c50a93b234734b715d6742c660d64",
+    "operation": "supersede",
+    "written_at_utc": "2026-11-12T09:30:00Z",
+    "written_by": "versioned_writer",
+    "condition": "dev",
+    "run_id": "run_3322182605da76d37631b9dc0e0e7cbf"
+  },
+  "content_hash": "sha256:aca996fd5c479395c75d241da8fb518ae87d2aeec9150e6859957ea9f9dfcb46"
+}

@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tiered-memory.local/schemas/v1/common.schema.json",
+  "title": "Shared definitions (schemas v1)",
+  "description": "IDs, hashes, timestamps, evidence references, provenance and the Appendix B enums. Referenced by every tier schema.",
+  "$defs": {
+    "hex32": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+
+    "project_id": { "type": "string", "pattern": "^prj_[a-z0-9][a-z0-9-]{0,62}$", "description": "Fixture project; cross-project writes are an integrity violation (Table 10)." },
+    "run_id": { "type": "string", "pattern": "^run_[0-9a-f]{32}$" },
+    "task_id": { "type": "string", "pattern": "^tsk_[A-Za-z0-9][A-Za-z0-9_-]{0,62}$", "description": "Logical task, e.g. tsk_T3 for Stage Two task T3." },
+    "session_id": { "type": "string", "pattern": "^ses_[0-9a-f]{32}$" },
+    "event_id": { "type": "string", "pattern": "^evt_[0-9a-f]{32}$" },
+    "decision_id": { "type": "string", "pattern": "^dec_[0-9a-f]{32}$" },
+    "review_id": { "type": "string", "pattern": "^rev_[0-9a-f]{32}$" },
+    "memory_id": { "type": "string", "pattern": "^mem_[0-9a-f]{32}$", "description": "Stable across versions of one Project Memory record." },
+    "session_memory_id": { "type": "string", "pattern": "^smem_[0-9a-f]{32}$" },
+    "entry_id": { "type": "string", "pattern": "^log_[0-9a-f]{32}$" },
+    "evidence_id": { "type": "string", "pattern": "^evd_[0-9a-f]{32}$" },
+    "version_id": { "type": "string", "pattern": "^ver_[0-9a-f]{32}$", "description": "Unique per written version; the target of supersedes links." },
+
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "git_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "utc_timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(Z|\\+00:00)$",
+      "description": "ISO 8601 in UTC only (proposal 4.11)."
+    },
+    "utc_date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "repo_path": { "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[^\\s].*$", "description": "Repository-relative path; no absolute paths, no '..'." },
+    "nonempty_text": { "type": "string", "minLength": 1, "maxLength": 4000 },
+
+    "tier": { "enum": ["project", "daily_log", "session"] },
+    "proposed_tier": { "enum": ["project", "daily_log", "session", "review", "skip"], "description": "Appendix B." },
+    "operation": { "enum": ["append", "update", "supersede", "archive", "no_op", "review"], "description": "Appendix B proposed_operation." },
+    "policy_outcome": { "enum": ["accepted", "blocked", "review_required"], "description": "Appendix B." },
+
+    "evidence_kind": {
+      "enum": ["file", "commit", "command", "test", "user_decision", "user_correction", "log_entry"],
+      "description": "Forms of source evidence named in proposal 1.11 and 2.4.2."
+    },
+
+    "evidence_ref": {
+      "type": "object",
+      "description": "One piece of source evidence. A claim is only as supported as its evidence (QR1).",
+      "additionalProperties": false,
+      "required": ["evidence_id", "kind", "locator", "source_hash", "captured_at_utc", "event_id"],
+      "properties": {
+        "evidence_id": { "$ref": "#/$defs/evidence_id" },
+        "kind": { "$ref": "#/$defs/evidence_kind" },
+        "locator": { "type": "string", "minLength": 1, "maxLength": 1000, "description": "Path (optionally path:line), commit SHA, command line, pytest node id, or log entry id." },
+        "source_hash": { "$ref": "#/$defs/sha256", "description": "Hash of the evidence content at capture time." },
+        "source_commit": { "anyOf": [{ "$ref": "#/$defs/git_commit" }, { "type": "null" }], "description": "Repository version the evidence was observed at." },
+        "captured_at_utc": { "$ref": "#/$defs/utc_timestamp" },
+        "event_id": { "$ref": "#/$defs/event_id", "description": "Event that carried this evidence into the system." },
+        "outcome": { "enum": ["pass", "fail", "error", "skipped", null], "description": "For kind=test or kind=command only." },
+        "exit_code": { "type": ["integer", "null"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "enum": ["test", "command"] } } },
+          "then": { "required": ["outcome"] },
+          "else": { "not": { "anyOf": [{ "required": ["outcome"] }, { "required": ["exit_code"] }] } }
+        }
+      ]
+    },
+
+    "provenance": {
+      "type": "object",
+      "description": "How this version was written: the audit chain from event to write (QR1). Writes come only from the Versioned Writer after a Policy Gate decision (FR1, FR5).",
+      "additionalProperties": false,
+      "required": ["source_event_id", "decision_id", "policy_outcome", "operation", "written_at_utc", "written_by"],
+      "properties": {
+        "source_event_id": { "$ref": "#/$defs/event_id" },
+        "decision_id": { "$ref": "#/$defs/decision_id" },
+        "policy_outcome": { "const": "accepted", "description": "Only accepted decisions produce a write; blocked or review_required ones stay in the decision trace." },
+        "review_id": { "anyOf": [{ "$ref": "#/$defs/review_id" }, { "type": "null" }], "description": "Set when a human approved or corrected the action." },
+        "operation": { "enum": ["append", "update", "supersede", "archive"] },
+        "written_at_utc": { "$ref": "#/$defs/utc_timestamp" },
+        "written_by": { "const": "versioned_writer" },
+        "condition": { "enum": ["A", "B", "dev"], "description": "Experimental condition (Table 8) or development use." },
+        "run_id": { "anyOf": [{ "$ref": "#/$defs/run_id" }, { "type": "null" }] }
+      }
+    },
+
+    "version_chain": {
+      "type": "object",
+      "description": "Fields shared by versioned tiers (Project Memory, Session Memory). Version 1 has no supersedes link; every later version must have one.",
+      "required": ["version", "version_id", "supersedes"],
+      "properties": {
+        "version": { "type": "integer", "minimum": 1 },
+        "version_id": { "$ref": "#/$defs/version_id" },
+        "supersedes": { "anyOf": [{ "$ref": "#/$defs/version_id" }, { "type": "null" }] }
+      },
+      "if": { "properties": { "version": { "const": 1 } } },
+      "then": { "properties": { "supersedes": { "type": "null" } } },
+      "else": { "properties": { "supersedes": { "$ref": "#/$defs/version_id" } } }
+    }
+  }
+}

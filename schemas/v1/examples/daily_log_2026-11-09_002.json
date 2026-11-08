@@ -1,0 +1,43 @@
+{
+  "schema_version": "dl-v1",
+  "tier": "daily_log",
+  "project_id": "prj_taskservice",
+  "log_date": "2026-11-09",
+  "run_id": "run_3322182605da76d37631b9dc0e0e7cbf",
+  "task_id": "tsk_T3",
+  "session_id": "ses_e8bc163c82eee18733288c7d4ac636db",
+  "corrects_entry_id": null,
+  "entry_id": "log_d7a27d87dd034ad5b270eff696b65ad4",
+  "sequence": 2,
+  "recorded_at_utc": "2026-11-09T14:20:45Z",
+  "event_id": "evt_d7a27d87dd034ad5b270eff696b65ad4",
+  "dedup_key": "d7a27d87dd034ad5b270eff696b65ad45812b42f51224d10cc43a50613923ae6",
+  "entry_type": "test_result",
+  "summary": "Permission check moved to app/services/tasks.py; full suite passes.",
+  "evidence": [
+    {
+      "evidence_id": "evd_d7a27d87dd034ad5b270eff696b65ad4",
+      "kind": "test",
+      "locator": "tests/",
+      "source_hash": "sha256:35a87b7d2ca715d36d54d9e0c81974942910cf6ad0f466d5b2f5c4a01b711049",
+      "source_commit": "a549a44b3316991928c80b3bee0eb916d16c9dcc",
+      "captured_at_utc": "2026-11-09T14:20:45Z",
+      "event_id": "evt_d7a27d87dd034ad5b270eff696b65ad4",
+      "outcome": "pass",
+      "exit_code": 0
+    }
+  ],
+  "prev_entry_hash": "sha256:7e90fcb2f0dffe10260a64983fbf567238c694481b8b33e0a3740eaa8cda1531",
+  "provenance": {
+    "source_event_id": "evt_d7a27d87dd034ad5b270eff696b65ad4",
+    "decision_id": "dec_d7a27d87dd034ad5b270eff696b65ad4",
+    "policy_outcome": "accepted",
+    "review_id": null,
+    "operation": "append",
+    "written_at_utc": "2026-11-09T14:20:45Z",
+    "written_by": "versioned_writer",
+    "condition": "dev",
+    "run_id": "run_3322182605da76d37631b9dc0e0e7cbf"
+  },
+  "content_hash": "sha256:ab3a5fbeb6ae01a43311f29483a18eaf23c4addedf7e830572a95818df447ddb"
+}

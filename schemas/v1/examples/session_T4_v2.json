@@ -1,0 +1,90 @@
+{
+  "schema_version": "sm-v1",
+  "tier": "session",
+  "project_id": "prj_taskservice",
+  "session_memory_id": "smem_11ee5e9af3eec0dc5afa6d11db4f11e5",
+  "task_id": "tsk_T4",
+  "version": 2,
+  "version_id": "ver_82931b11eb52cebe9914132dbbe47366",
+  "supersedes": "ver_dbdc50d70b41f626614f5aafb20e458f",
+  "status": "paused",
+  "goal": "Add audit logging for task create, update and delete.",
+  "progress": [
+    {
+      "item": "Audit log for task creation",
+      "state": "done",
+      "evidence_ids": [
+        "evd_e56be707597cdc59d9e04a52af182b02"
+      ]
+    },
+    {
+      "item": "Audit log for task update",
+      "state": "in_progress",
+      "evidence_ids": []
+    },
+    {
+      "item": "Audit log for task delete",
+      "state": "not_started",
+      "evidence_ids": []
+    }
+  ],
+  "tentative_findings": [
+    {
+      "finding": "Writing audit rows inside the service-layer transaction may be enough; not verified.",
+      "evidence_ids": []
+    }
+  ],
+  "failed_attempts": [
+    {
+      "approach": "Logging updates from HTTP middleware.",
+      "outcome": "Middleware cannot see the task's previous field values; test_update_logged fails.",
+      "evidence_ids": [
+        "evd_d306cd8f95edc38b76434dc12d609efe"
+      ],
+      "event_id": "evt_d306cd8f95edc38b76434dc12d609efe"
+    }
+  ],
+  "blockers": [],
+  "next_steps": [
+    "Log updates from TaskService.update() with old and new values, then rerun tests/test_audit.py."
+  ],
+  "evidence": [
+    {
+      "evidence_id": "evd_e56be707597cdc59d9e04a52af182b02",
+      "kind": "test",
+      "locator": "tests/test_audit.py::test_create_logged",
+      "source_hash": "sha256:6642991a1bbfb33272a608567148b92fbaf087651b277a99c729734bee115063",
+      "source_commit": "a549a44b3316991928c80b3bee0eb916d16c9dcc",
+      "captured_at_utc": "2026-11-10T11:45:00Z",
+      "event_id": "evt_e56be707597cdc59d9e04a52af182b02",
+      "outcome": "pass",
+      "exit_code": 0
+    },
+    {
+      "evidence_id": "evd_d306cd8f95edc38b76434dc12d609efe",
+      "kind": "test",
+      "locator": "tests/test_audit.py::test_update_logged",
+      "source_hash": "sha256:926a14af5763347c61df3d2de82131b1d9693b978ad1b318a17da741d85925a0",
+      "source_commit": "a549a44b3316991928c80b3bee0eb916d16c9dcc",
+      "captured_at_utc": "2026-11-10T11:45:00Z",
+      "event_id": "evt_d306cd8f95edc38b76434dc12d609efe",
+      "outcome": "fail",
+      "exit_code": 1
+    }
+  ],
+  "last_session_id": "ses_ad328846aa18b32a335816374511cac1",
+  "created_at_utc": "2026-11-10T10:00:00Z",
+  "updated_at_utc": "2026-11-10T11:45:00Z",
+  "provenance": {
+    "source_event_id": "evt_82931b11eb52cebe9914132dbbe47366",
+    "decision_id": "dec_82931b11eb52cebe9914132dbbe47366",
+    "policy_outcome": "accepted",
+    "review_id": null,
+    "operation": "update",
+    "written_at_utc": "2026-11-10T11:45:00Z",
+    "written_by": "versioned_writer",
+    "condition": "dev",
+    "run_id": "run_3322182605da76d37631b9dc0e0e7cbf"
+  },
+  "content_hash": "sha256:b3d49d670999aeac5a877ebfc23c853d252462f0ff08753f8203a9cea21da269"
+}

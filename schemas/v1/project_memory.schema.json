@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tiered-memory.local/schemas/v1/project_memory.schema.json",
+  "title": "Project Memory record version (P tier)",
+  "description": "Stable, validated repository knowledge: commands, constraints, conventions, architecture and confirmed decisions (Glossary). One file = one version; versions of the same fact share memory_id.",
+  "type": "object",
+  "additionalProperties": false,
+  "allOf": [{ "$ref": "common.schema.json#/$defs/version_chain" }],
+  "required": [
+    "schema_version", "tier", "project_id", "memory_id", "version", "version_id", "supersedes",
+    "category", "claim", "status", "support", "evidence", "paths", "content_hash",
+    "source_commit", "created_at_utc", "verified_at_utc", "last_verification_event_id", "provenance"
+  ],
+  "properties": {
+    "schema_version": { "const": "pm-v1" },
+    "tier": { "const": "project" },
+    "project_id": { "$ref": "common.schema.json#/$defs/project_id" },
+    "memory_id": { "$ref": "common.schema.json#/$defs/memory_id" },
+    "version": true,
+    "version_id": true,
+    "supersedes": true,
+
+    "category": {
+      "enum": ["command", "constraint", "convention", "architecture", "decision", "procedure"],
+      "description": "Semantic, normative and procedural memory (2.3.1). Episodic material (attempts, failures) belongs in the Daily Log and Session Memory, not here."
+    },
+    "claim": { "$ref": "common.schema.json#/$defs/nonempty_text", "description": "One fact unit, stated so it can be checked against evidence." },
+    "status": {
+      "enum": ["active", "uncertain", "superseded", "archived"],
+      "description": "uncertain = drift suspected, awaiting revalidation (Appendix D). superseded/archived versions stay readable (no permanent deletion, 3.11)."
+    },
+    "support": {
+      "enum": ["repository_evidence", "test_validated", "user_approved"],
+      "description": "Why the claim is allowed into Project Memory. Unverified inferences stay out (2.4.2); they live in Session Memory as tentative findings."
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/evidence_ref" },
+      "description": "At least one evidence reference; unsupported durable claims are blocked (FR5)."
+    },
+    "paths": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/repo_path" },
+      "uniqueItems": true,
+      "description": "Repository paths the claim depends on; used by drift checks (missing or changed paths, 2.11)."
+    },
+    "tags": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,39}$" }, "uniqueItems": true, "maxItems": 10 },
+    "content_hash": { "$ref": "common.schema.json#/$defs/sha256", "description": "sha256 of the canonical claim text (see docs/requirements_v1.md §4)." },
+    "source_commit": { "$ref": "common.schema.json#/$defs/git_commit", "description": "Repository version the claim was established against." },
+    "created_at_utc": { "$ref": "common.schema.json#/$defs/utc_timestamp" },
+    "verified_at_utc": { "$ref": "common.schema.json#/$defs/utc_timestamp" },
+    "last_verification_event_id": { "$ref": "common.schema.json#/$defs/event_id" },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" }
+  },
+  "$comment": "Support rules (docs/requirements_v1.md §6, decision D3). The Policy Gate may be stricter, never looser.",
+  "dependentSchemas": {
+    "support": {
+      "allOf": [
+        {
+          "if": { "properties": { "support": { "const": "user_approved" } } },
+          "then": { "properties": { "evidence": { "contains": { "properties": { "kind": { "enum": ["user_decision", "user_correction"] } }, "required": ["kind"] } } } }
+        },
+        {
+          "if": { "properties": { "support": { "const": "test_validated" } } },
+          "then": { "properties": { "evidence": { "contains": { "properties": { "kind": { "enum": ["test", "command"] }, "outcome": { "const": "pass" } }, "required": ["kind", "outcome"] } } } }
+        },
+        {
+          "if": { "properties": { "category": { "const": "command" } }, "required": ["category"] },
+          "then": { "properties": { "support": { "enum": ["test_validated", "user_approved"] } } }
+        },
+        {
+          "if": { "properties": { "category": { "const": "decision" } }, "required": ["category"] },
+          "then": { "properties": { "support": { "const": "user_approved" } } }
+        }
+      ]
+    }
+  }
+}
