@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tiered-memory"
+version = "0.0.1"
+description = "Automated three-tier external memory for long-horizon coding agents (CISC 699 Capstone II prototype)"
+requires-python = ">=3.13"
+dependencies = [
+    "anthropic==2.6.0",
+    "jsonschema==4.26.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==9.2.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "live: calls a real model API; skipped unless RUN_LIVE=1",
+]
