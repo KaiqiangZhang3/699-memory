@@ -140,3 +140,15 @@ Hours are planning estimates for KZ only, based on similar GRAD 695 build work a
 **Main risk to the critical path:** the 14-week proposal plan must fit into 13 weeks, and formal collection must happen in Weeks 9–10 instead of Weeks 10–11 (DEC-01).
 
 **Minimum completion path** (only with an instructor-approved amendment, DEC-06): all of Stage One plus at least two complete A/B pairs. The missing pair would be reported as a limitation, and the research question would not change.
+
+---
+
+## 5. Week 1 Completion Status
+
+| Completion check | Status | Evidence |
+|---|---|---|
+| Extraction checked against the proposal | Done | Verification note in §1 |
+| `pytest` runs | Done | 18 tests pass (`tiered-memory`, commit `dd8738e`) |
+| One model call logged | **Deferred to end of Week 3** | Logger and call script are done; the failure path was verified (one `status: "error"` record). The live call is waiting for an API key. |
+
+**Deviation (T02).** The live model call is deferred because no API key is configured yet. No Week 1–3 task depends on a live model: T11 Curator tests use a deterministic test double, as proposal 5.5 allows. **New deadline:** configure the key and run `scripts/smoke_model_call.py` by the end of Week 3, then add the `status: "ok"` usage line here. **Risk R6 trigger:** no working key by the start of Week 4. This would also put DEC-04 (model pinned before the Week 5 pilot) at risk.
