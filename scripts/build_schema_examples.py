@@ -70,7 +70,7 @@ def project_examples() -> list[tuple[str, dict]]:
         "version_id": hid("ver", "test-command-v1"), "supersedes": None,
         "category": "command",
         "claim": "Run the full test suite with `pytest -q tests/` from the repository root.",
-        "status": "superseded", "support": "test_validated",
+        "status": "active", "support": "test_validated",
         "evidence": [evidence("pytest-run-1", "test", "tests/", t0, COMMIT_1, outcome="pass", exit_code=0)],
         "paths": ["tests/"], "tags": ["testing"],
         "source_commit": COMMIT_1, "created_at_utc": t0, "verified_at_utc": t0,

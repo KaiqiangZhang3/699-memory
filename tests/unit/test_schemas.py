@@ -182,7 +182,7 @@ def test_v2_supersedes_v1():
     v1, v2 = load("project_test_command_v1.json"), load("project_test_command_v2.json")
     assert v2["memory_id"] == v1["memory_id"]
     assert v2["supersedes"] == v1["version_id"]
-    assert v1["status"] == "superseded" and v2["status"] == "active"
+    assert v1["status"] == "active" and v2["status"] == "active"
 
 
 # ---- Daily Log --------------------------------------------------------------

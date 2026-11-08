@@ -2,7 +2,7 @@
 
 Prototype for *Design and Evaluation of an Automated Three-Tier External Memory System for Long-Horizon Coding Agents* (CISC 699 Capstone II, Kaiqiang Zhang; GRAD 695 proposal, Sept 26, 2026).
 
-Status: **`design-v1` + Stage Two fixture skeleton (T01–T06).** The component packages are still empty placeholders.
+Status: **`design-v1`, Stage Two fixture skeleton, and the memory store with its Versioned Writer (T01–T07).**
 
 ## Setup
 
@@ -37,7 +37,8 @@ This builds a fresh git repo from the fixture source (with a fixed commit SHA), 
 |---|---|---|
 | `src/tiered_memory/usage.py` | Usage logger: UTC timestamps, monotonic duration, per-component records, `"unavailable"` instead of 0 | T02 |
 | `src/tiered_memory/model_client.py` | Messages API wrapper; logs one record per call | T02 |
-| `src/tiered_memory/{memory,hooks,queue,curator,router,policy,review,maintenance,resume}/` | Components from proposal Table 5 | T07–T19 |
+| `src/tiered_memory/memory/` | Read-only `MemoryStore` + `VersionedWriter` (the only writer); contract in `docs/contracts/memory_store.md` | T07 |
+| `src/tiered_memory/{hooks,queue,curator,router,policy,review,maintenance,resume}/` | Remaining components from proposal Table 5 | T10–T19 |
 | `schemas/v1/` | P/L/S JSON schemas | T03 |
 | `fixtures/formal/taskservice/` | Stage Two fixture (state before task T1); `manifest.json` records the commit SHA and the baseline | T06 |
 | `fixtures/pilot/` | Pilot fixture, kept separate from the formal one (C02); not built yet | T22 |

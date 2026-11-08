@@ -26,8 +26,8 @@
     },
     "claim": { "$ref": "common.schema.json#/$defs/nonempty_text", "description": "One fact unit, stated so it can be checked against evidence." },
     "status": {
-      "enum": ["active", "uncertain", "superseded", "archived"],
-      "description": "uncertain = drift suspected, awaiting revalidation (Appendix D). superseded/archived versions stay readable (no permanent deletion, 3.11)."
+      "enum": ["active", "uncertain", "archived"],
+      "description": "Status as of this version. uncertain = drift suspected, awaiting revalidation (Appendix D). Version files are write-once (D1), so 'superseded' is not stored: a version is superseded when a later version of the same memory_id exists. Archived and superseded versions stay readable (no permanent deletion, 3.11)."
     },
     "support": {
       "enum": ["repository_evidence", "test_validated", "user_approved"],

@@ -8,7 +8,7 @@
   "supersedes": null,
   "category": "command",
   "claim": "Run the full test suite with `pytest -q tests/` from the repository root.",
-  "status": "superseded",
+  "status": "active",
   "support": "test_validated",
   "evidence": [
     {
