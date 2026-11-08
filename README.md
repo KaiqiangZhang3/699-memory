@@ -47,7 +47,9 @@ This builds a fresh git repo from the fixture source (with a fixed commit SHA), 
 | `cases/formal/` | 60 formal cases (not yet written) | T18 |
 | `src/tiered_memory/evaluation/` | Case loader / seeding, scorer v0 | T09 |
 | `prompts/` | Versioned Curator/Router prompts | T11 |
-| `records/Wxx/` | Weekly short records | T32 |
+| `records/Wxx/` | Weekly short records. This is the authoritative copy. | T32 |
+| `planning/D1/` | The D1 schedule and work plan as submitted | T05 |
+| `docs/proposal/` | GRAD 695 final proposal (source of all commitments) | — |
 | `runs/` | Raw run output (git-ignored) | — |
 
 Tests never call a live model; they use a deterministic fake client (proposal 5.5).
