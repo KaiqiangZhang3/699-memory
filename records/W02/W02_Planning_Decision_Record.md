@@ -10,8 +10,8 @@
 **Objective.** Finalize the design baseline and submit both D1 plans.
 
 **Work completed.** Fill this in at the end of the week with evidence only:
-- [ ] `design-v1` tag — commit hash: ____
-- [ ] Event taxonomy and threat model — file: ____
+- [x] `design-v1` tag — commit hash: `58233053e90850ad4405840de04e5295059b824b` (92 tests pass; all 6 sample records validate)
+- [x] Event taxonomy and threat model — files: `docs/event_taxonomy_v1.md`, `cases/event_families_v1.json`, `docs/threat_model_v1.md`
 - [x] Prompt 7 audit completed (table below)
 - [x] Both plans submitted (T05 done; the student confirmed this on 2026-11-08). Date/channel: [TO CONFIRM]. Receipt kept at: [TO CONFIRM]
 
