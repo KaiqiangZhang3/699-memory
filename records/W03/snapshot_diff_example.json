@@ -1,0 +1,49 @@
+{
+  "run_id": "run_f17dd6860f8845fbaee281da4c08d701",
+  "manifest_outputs": {
+    "trace_sha256": "sha256:cc688abec51112b82ef220c3ffe4b8796f16e7723b200a8a9bf42b34a4fc812d",
+    "trace_events": 15,
+    "snapshots": 7,
+    "writes": 3,
+    "no_ops": 1,
+    "rejected_writes": 0,
+    "final_snapshot_sha256": "sha256:a139bca3a3f5640576a1b2c57041d2112943336a25fb62e99d7e5867c6f425c6",
+    "usage_records": 0
+  },
+  "audit_problems": [],
+  "snapshot_diff": {
+    "from": "0001-initial.json",
+    "to": "0007-final.json",
+    "added": [
+      {
+        "tier": "daily_log",
+        "id": "log_af8cba153d05451bb6c1312738260250",
+        "operation": "append",
+        "source_event_id": "evt_836ff184e7b41b1e13cb5fd89fa1de98",
+        "summary": "Baseline suite passed: 22 tests.",
+        "status": null,
+        "version": 1
+      },
+      {
+        "tier": "project",
+        "id": "ver_6f8ec22ce7da48e9a427a6dde9bc8074",
+        "operation": "update",
+        "source_event_id": "evt_0b7a461fefbb68e518e51884369a4b88",
+        "summary": "Run the test suite with `python -m pytest -q` from the repository root.",
+        "status": "uncertain",
+        "version": 2
+      },
+      {
+        "tier": "project",
+        "id": "ver_ca11634f9ec24cfba9f490aa464f7b6b",
+        "operation": "append",
+        "source_event_id": "evt_1e7dc6d6c16565406afd121a89164b99",
+        "summary": "Run the test suite with `python -m pytest -q` from the repository root.",
+        "status": "active",
+        "version": 1
+      }
+    ],
+    "removed": [],
+    "changed": []
+  }
+}

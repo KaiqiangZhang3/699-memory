@@ -106,3 +106,27 @@ def validate_record(record: dict[str, Any], kind: str | None = None) -> list[str
         for missing in sorted(set(used) - known):
             errors.append(f"evidence_ids: {missing} is not in the record's evidence list")
     return errors
+
+
+@lru_cache(maxsize=None)
+def validator_for_file(filename: str) -> Draft202012Validator:
+    """Validator for any schema file in schemas/v1 (trace events, run manifests, ...)."""
+    schema = json.loads((SCHEMA_DIR / filename).read_text(encoding="utf-8"))
+    Draft202012Validator.check_schema(schema)
+    return Draft202012Validator(schema, registry=_registry())
+
+
+def schema_errors(obj: Any, filename: str) -> list[str]:
+    return [
+        f"{'/'.join(map(str, e.absolute_path)) or '<root>'}: {e.message}"
+        for e in sorted(validator_for_file(filename).iter_errors(obj), key=lambda e: list(e.absolute_path))
+    ]
+
+
+def schemas_sha256() -> str:
+    """sha256 over 'name<TAB>sha256(content)' for every schema file, sorted by name."""
+    lines = [
+        f"{p.name}\t{hashlib.sha256(p.read_bytes()).hexdigest()}"
+        for p in sorted(SCHEMA_DIR.glob("*.schema.json"))
+    ]
+    return sha256_text("\n".join(lines))

@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tiered-memory.local/schemas/v1/trace_event.schema.json",
+  "title": "Run trace event (one JSONL line)",
+  "description": "Append-only, hash-chained trace for one run (proposal 3.8, 4.6, Table 11). Each line's line_hash covers every other field, including prev_hash.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["trace_version", "run_id", "seq", "at_utc", "mono_ms", "kind", "payload", "prev_hash", "line_hash"],
+  "properties": {
+    "trace_version": { "const": "trace-v1" },
+    "run_id": { "$ref": "common.schema.json#/$defs/run_id" },
+    "seq": { "type": "integer", "minimum": 1 },
+    "at_utc": { "$ref": "common.schema.json#/$defs/utc_timestamp" },
+    "mono_ms": { "type": "number", "minimum": 0, "description": "Milliseconds since run start, monotonic clock (4.11)." },
+    "kind": {
+      "enum": [
+        "run_start", "run_end",
+        "event_captured", "candidate_queued", "curator_output", "routing_proposal",
+        "policy_decision", "review",
+        "write", "write_rejected",
+        "snapshot", "recall",
+        "task_boundary", "maintenance_checkpoint",
+        "deviation", "note"
+      ]
+    },
+    "payload": { "type": "object" },
+    "prev_hash": { "anyOf": [{ "$ref": "common.schema.json#/$defs/sha256" }, { "type": "null" }] },
+    "line_hash": { "$ref": "common.schema.json#/$defs/sha256" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "seq": { "const": 1 } } },
+      "then": { "properties": { "prev_hash": { "type": "null" }, "kind": { "const": "run_start" } } },
+      "else": { "properties": { "prev_hash": { "$ref": "common.schema.json#/$defs/sha256" } } }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "write" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["event_id", "decision_id", "tier", "requested", "executed", "record_id", "content_hash"],
+            "properties": {
+              "event_id": { "$ref": "common.schema.json#/$defs/event_id" },
+              "decision_id": { "$ref": "common.schema.json#/$defs/decision_id" },
+              "tier": { "$ref": "common.schema.json#/$defs/tier" },
+              "requested": { "$ref": "common.schema.json#/$defs/operation" },
+              "executed": { "$ref": "common.schema.json#/$defs/operation" },
+              "record_id": { "type": "string", "description": "version_id for P/S, entry_id for L" },
+              "previous_version_id": { "anyOf": [{ "$ref": "common.schema.json#/$defs/version_id" }, { "type": "null" }] },
+              "content_hash": { "$ref": "common.schema.json#/$defs/sha256" },
+              "file": { "type": ["string", "null"] },
+              "file_sha256": { "anyOf": [{ "$ref": "common.schema.json#/$defs/sha256" }, { "type": "null" }] }
+            },
+            "if": { "properties": { "executed": { "const": "no_op" } } },
+            "then": { "properties": { "file": { "type": "null" }, "file_sha256": { "type": "null" } } },
+            "else": { "required": ["file", "file_sha256"], "properties": { "file": { "type": "string" }, "file_sha256": { "$ref": "common.schema.json#/$defs/sha256" } } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "write_rejected" } } },
+      "then": { "properties": { "payload": { "type": "object", "required": ["event_id", "tier", "requested", "reason"] } } }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "snapshot" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["reason", "snapshot_sha256", "file", "counts"],
+            "properties": {
+              "reason": { "enum": ["initial", "write", "task_boundary", "maintenance_checkpoint", "pre_recall", "final"] },
+              "snapshot_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+              "file": { "type": "string" },
+              "counts": { "type": "object" }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

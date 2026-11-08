@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tiered-memory.local/schemas/v1/run_manifest.schema.json",
+  "title": "Run manifest",
+  "description": "One per run (proposal Table 11, 5.10): what ran, under which versions and limits, and hashes of what it produced.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version", "run_id", "status", "purpose", "stage", "condition", "pair_id", "case_id", "task_version",
+    "project_id", "code", "schemas_sha256", "fixture", "protocol_version", "model_config", "budgets", "clock",
+    "operator", "started_at_utc", "ended_at_utc", "outputs", "deviations"
+  ],
+  "properties": {
+    "manifest_version": { "const": "manifest-v1" },
+    "run_id": { "$ref": "common.schema.json#/$defs/run_id" },
+    "status": { "enum": ["running", "complete", "failed"] },
+    "purpose": { "enum": ["test", "dev", "pilot", "formal"], "description": "Pilot and formal data are kept apart (4.10)." },
+    "stage": { "enum": ["stage_one", "stage_two", "none"] },
+    "condition": { "enum": ["A", "B", "dev"] },
+    "pair_id": { "type": ["string", "null"] },
+    "case_id": { "type": ["string", "null"] },
+    "task_version": { "type": ["string", "null"] },
+    "project_id": { "$ref": "common.schema.json#/$defs/project_id" },
+    "code": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "dirty"],
+      "properties": {
+        "commit": { "anyOf": [{ "$ref": "common.schema.json#/$defs/git_commit" }, { "type": "null" }] },
+        "dirty": { "type": ["boolean", "null"], "description": "Uncommitted changes in the prototype repo. Formal runs require false." }
+      }
+    },
+    "schemas_sha256": { "$ref": "common.schema.json#/$defs/sha256", "description": "Hash over all schemas/v1/*.schema.json." },
+    "fixture": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "initial_commit"],
+          "properties": {
+            "path": { "type": "string" },
+            "initial_commit": { "$ref": "common.schema.json#/$defs/git_commit" }
+          }
+        }
+      ]
+    },
+    "protocol_version": { "type": "string", "description": "'unfrozen' until protocol-v1 (T23)." },
+    "model_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pinned", "provider", "model", "effort", "fallback"],
+      "properties": {
+        "pinned": { "type": "boolean", "description": "False until DEC-04 fixes the configuration." },
+        "provider": { "type": ["string", "null"] },
+        "model": { "type": ["string", "null"] },
+        "effort": { "type": ["string", "null"] },
+        "fallback": { "type": ["string", "null"], "description": "'off', 'default', or null." }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_model_calls", "max_total_tokens", "max_seconds"],
+      "properties": {
+        "max_model_calls": { "type": ["integer", "null"], "minimum": 0 },
+        "max_total_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "max_seconds": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "clock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "checkpoints"],
+      "properties": {
+        "mode": { "enum": ["real", "controlled"] },
+        "checkpoints": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/utc_timestamp" } }
+      }
+    },
+    "operator": { "type": "string", "minLength": 1 },
+    "started_at_utc": { "$ref": "common.schema.json#/$defs/utc_timestamp" },
+    "ended_at_utc": { "anyOf": [{ "$ref": "common.schema.json#/$defs/utc_timestamp" }, { "type": "null" }] },
+    "outputs": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["trace_sha256", "trace_events", "snapshots", "writes", "no_ops", "rejected_writes", "final_snapshot_sha256", "usage_records"],
+          "properties": {
+            "trace_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+            "trace_events": { "type": "integer", "minimum": 0 },
+            "snapshots": { "type": "integer", "minimum": 0 },
+            "writes": { "type": "integer", "minimum": 0 },
+            "no_ops": { "type": "integer", "minimum": 0 },
+            "rejected_writes": { "type": "integer", "minimum": 0 },
+            "final_snapshot_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+            "usage_records": { "type": "integer", "minimum": 0 }
+          }
+        }
+      ]
+    },
+    "deviations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["at_utc", "description"],
+        "properties": {
+          "at_utc": { "$ref": "common.schema.json#/$defs/utc_timestamp" },
+          "description": { "type": "string", "minLength": 1 }
+        }
+      },
+      "description": "Operator or protocol deviations, kept rather than hidden (4.8, 4.15)."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "running" } } },
+      "then": { "properties": { "ended_at_utc": { "type": "null" }, "outputs": { "type": "null" } } },
+      "else": { "properties": { "ended_at_utc": { "$ref": "common.schema.json#/$defs/utc_timestamp" }, "outputs": { "type": "object" } } }
+    },
+    {
+      "if": { "properties": { "purpose": { "const": "formal" } } },
+      "then": {
+        "properties": {
+          "code": { "properties": { "dirty": { "const": false } } },
+          "model_config": { "properties": { "pinned": { "const": true } } },
+          "protocol_version": { "not": { "const": "unfrozen" } }
+        }
+      }
+    }
+  ]
+}
