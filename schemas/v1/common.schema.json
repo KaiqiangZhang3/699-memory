@@ -30,6 +30,12 @@
     "repo_path": { "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[^\\s].*$", "description": "Repository-relative path; no absolute paths, no '..'." },
     "nonempty_text": { "type": "string", "minLength": 1, "maxLength": 4000 },
 
+    "hook_event_type": {
+      "enum": ["session_start", "session_end", "task_start", "task_complete", "command_run", "test_run", "code_change", "user_message", "maintenance_tick"],
+      "description": "What a Hook observed (docs/event_taxonomy_v1.md §1). Separate from the event family, which is a reference label."
+    },
+    "event_family": { "enum": ["F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08", "F09", "F10"] },
+
     "tier": { "enum": ["project", "daily_log", "session"] },
     "proposed_tier": { "enum": ["project", "daily_log", "session", "review", "skip"], "description": "Appendix B." },
     "operation": { "enum": ["append", "update", "supersede", "archive", "no_op", "review"], "description": "Appendix B proposed_operation." },

@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Task / commitment | T03 / C01 (design package) |
-| Status | **v1 candidate, Week 1.** Design questions are settled (§6). It will be tagged `design-v1` in Week 2, together with the event taxonomy and threat model (T04). |
+| Status | **v1, tagged `design-v1`** (Week 2). It is released together with `docs/event_taxonomy_v1.md` and `docs/threat_model_v1.md` (T04). |
 | Source | GRAD 695 Final Proposal: 3.5 (Table 4), 3.7 (Table 5), 3.8, 3.10–3.11, 4.6 (Table 11), 4.11, Appendices B and D |
 | Schemas | `schemas/v1/*.schema.json` (JSON Schema Draft 2020-12); samples in `schemas/v1/examples/` |
 | Validator | `src/tiered_memory/schemas.py` → `validate_record(record)` |

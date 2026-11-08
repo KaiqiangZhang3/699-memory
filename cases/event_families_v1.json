@@ -1,0 +1,440 @@
+{
+  "taxonomy_version": "event-families-v1",
+  "source": "GRAD 695 proposal 4.5 and Appendix D; expected handling refined in docs/event_taxonomy_v1.md",
+  "hook_event_types": [
+    "session_start",
+    "session_end",
+    "task_start",
+    "task_complete",
+    "command_run",
+    "test_run",
+    "code_change",
+    "user_message",
+    "maintenance_tick"
+  ],
+  "families": [
+    {
+      "id": "F01",
+      "key": "stable_project_fact",
+      "name": "Stable project fact",
+      "tests": "Promotion to durable knowledge",
+      "definition": "The event shows a fact about the repository that holds beyond the current task: a command, constraint, convention, architectural boundary or procedure, backed by evidence strong enough under rule D3.",
+      "typical_hook_events": [
+        "command_run",
+        "test_run",
+        "code_change",
+        "task_complete"
+      ],
+      "expected": [
+        {
+          "tier": "daily_log",
+          "operation": "append",
+          "policy_outcome": "accepted"
+        },
+        {
+          "tier": "project",
+          "operation": "append",
+          "policy_outcome": "accepted"
+        }
+      ],
+      "acceptable_alternatives": [
+        [
+          {
+            "tier": "daily_log",
+            "operation": "append",
+            "policy_outcome": "accepted"
+          },
+          {
+            "tier": "project",
+            "operation": "review",
+            "policy_outcome": "review_required"
+          }
+        ]
+      ],
+      "forbidden": [
+        "Project Memory write that does not meet rule D3 for its category",
+        "Project Memory write with a claim the evidence does not support"
+      ],
+      "primary_metrics": [
+        "tier_operation_correctness",
+        "incorrect_project_writes"
+      ]
+    },
+    {
+      "id": "F02",
+      "key": "task_completion_validation",
+      "name": "Task completion and validation",
+      "tests": "Evidence capture and status update",
+      "definition": "A task or subtask finishes and validation runs (tests, a command). The outcome must be recorded as evidence, and the task's progress updated.",
+      "typical_hook_events": [
+        "task_complete",
+        "test_run"
+      ],
+      "expected": [
+        {
+          "tier": "daily_log",
+          "operation": "append",
+          "policy_outcome": "accepted"
+        },
+        {
+          "tier": "session",
+          "operation": "update",
+          "policy_outcome": "accepted"
+        }
+      ],
+      "acceptable_alternatives": [
+        [
+          {
+            "tier": "daily_log",
+            "operation": "append",
+            "policy_outcome": "accepted"
+          },
+          {
+            "tier": "session",
+            "operation": "update",
+            "policy_outcome": "accepted"
+          },
+          {
+            "tier": "project",
+            "operation": "append",
+            "policy_outcome": "accepted"
+          }
+        ]
+      ],
+      "forbidden": [
+        "Marking a step done without passing-test evidence",
+        "Promoting task-specific progress to Project Memory"
+      ],
+      "notes": "The three-write alternative is acceptable only when the validation also establishes a reusable fact that meets rule D3, such as a confirmed test command.",
+      "primary_metrics": [
+        "tier_operation_correctness",
+        "recall_coverage"
+      ]
+    },
+    {
+      "id": "F03",
+      "key": "unfinished_session_state",
+      "name": "Unfinished session state",
+      "tests": "Resumable task continuity",
+      "definition": "A session ends or is interrupted while the task is incomplete. Goal, progress, blockers and the next step must be saved so a fresh session can resume.",
+      "typical_hook_events": [
+        "session_end"
+      ],
+      "expected": [
+        {
+          "tier": "daily_log",
+          "operation": "append",
+          "policy_outcome": "accepted"
+        },
+        {
+          "tier": "session",
+          "operation": "update",
+          "policy_outcome": "accepted"
+        }
+      ],
+      "acceptable_alternatives": [],
+      "forbidden": [
+        "Session Memory left without a next step while status is active or paused",
+        "Tentative findings written to Project Memory"
+      ],
+      "primary_metrics": [
+        "resume_delay",
+        "recall_coverage"
+      ]
+    },
+    {
+      "id": "F04",
+      "key": "failed_attempt",
+      "name": "Failed attempt",
+      "tests": "Experiential memory",
+      "definition": "An approach was tried and failed validation. The approach, the failure and its evidence must be kept so the same approach is not repeated under unchanged conditions.",
+      "typical_hook_events": [
+        "test_run",
+        "command_run"
+      ],
+      "expected": [
+        {
+          "tier": "daily_log",
+          "operation": "append",
+          "policy_outcome": "accepted"
+        },
+        {
+          "tier": "session",
+          "operation": "update",
+          "policy_outcome": "accepted"
+        }
+      ],
+      "acceptable_alternatives": [],
+      "forbidden": [
+        "Writing a failure as a Project Memory rule",
+        "Recording a failed attempt without failing evidence"
+      ],
+      "primary_metrics": [
+        "tier_operation_correctness",
+        "repeated_mistakes"
+      ]
+    },
+    {
+      "id": "F05",
+      "key": "repeated_event",
+      "name": "Repeated event",
+      "tests": "Idempotency",
+      "definition": "The same event arrives again (a Hook retry or a duplicate delivery), with the same dedup_key or the same content as an existing record.",
+      "typical_hook_events": [
+        "command_run",
+        "test_run",
+        "code_change",
+        "task_complete"
+      ],
+      "expected": [
+        {
+          "tier": "daily_log",
+          "operation": "no_op",
+          "policy_outcome": "accepted"
+        }
+      ],
+      "acceptable_alternatives": [
+        [
+          {
+            "tier": "project",
+            "operation": "no_op",
+            "policy_outcome": "accepted"
+          }
+        ],
+        [
+          {
+            "tier": "session",
+            "operation": "no_op",
+            "policy_outcome": "accepted"
+          }
+        ]
+      ],
+      "forbidden": [
+        "A second canonical record or version for the same content"
+      ],
+      "notes": "The expected tier is the tier of the original record. Exactly one canonical write must exist across the original and every retry, and the retry must be visible in the queue log (QR2).",
+      "primary_metrics": [
+        "tier_operation_correctness",
+        "integrity_checks"
+      ]
+    },
+    {
+      "id": "F06",
+      "key": "conflicting_claim",
+      "name": "Conflicting claim",
+      "tests": "Escalation and version handling",
+      "definition": "New information contradicts an active Project Memory record, and it is not clear-cut which one is right.",
+      "typical_hook_events": [
+        "code_change",
+        "test_run",
+        "user_message"
+      ],
+      "expected": [
+        {
+          "tier": "daily_log",
+          "operation": "append",
+          "policy_outcome": "accepted"
+        },
+        {
+          "tier": "project",
+          "operation": "review",
+          "policy_outcome": "review_required"
+        }
+      ],
+      "acceptable_alternatives": [
+        [
+          {
+            "tier": "daily_log",
+            "operation": "append",
+            "policy_outcome": "accepted"
+          },
+          {
+            "tier": "project",
+            "operation": "supersede",
+            "policy_outcome": "accepted"
+          }
+        ]
+      ],
+      "forbidden": [
+        "Silent overwrite: an update that does not supersede the previous version",
+        "Two active Project Memory records that contradict each other"
+      ],
+      "notes": "Supersede is acceptable only when the new evidence is authoritative under rule D3, for example a user decision or a newer commit with a passing test.",
+      "primary_metrics": [
+        "tier_operation_correctness",
+        "incorrect_project_writes"
+      ]
+    },
+    {
+      "id": "F07",
+      "key": "changed_stale_reference",
+      "name": "Changed or stale reference",
+      "tests": "Drift detection",
+      "definition": "A path, command or interface named by an active memory record has changed or disappeared (a rename, migration or refactor), often without anything saying that the old memory is now wrong.",
+      "typical_hook_events": [
+        "code_change",
+        "maintenance_tick",
+        "command_run"
+      ],
+      "expected": [
+        {
+          "tier": "daily_log",
+          "operation": "append",
+          "policy_outcome": "accepted"
+        },
+        {
+          "tier": "project",
+          "operation": "supersede",
+          "policy_outcome": "accepted"
+        }
+      ],
+      "acceptable_alternatives": [
+        [
+          {
+            "tier": "daily_log",
+            "operation": "append",
+            "policy_outcome": "accepted"
+          },
+          {
+            "tier": "project",
+            "operation": "update",
+            "policy_outcome": "accepted"
+          }
+        ],
+        [
+          {
+            "tier": "daily_log",
+            "operation": "append",
+            "policy_outcome": "accepted"
+          },
+          {
+            "tier": "project",
+            "operation": "review",
+            "policy_outcome": "review_required"
+          }
+        ]
+      ],
+      "forbidden": [
+        "Leaving the stale record active and unchanged",
+        "Erasing the old version instead of keeping it in history"
+      ],
+      "notes": "Supersede is used when the replacement is confirmed by evidence. An update marks the record status as uncertain until it can be revalidated. Review is used when the evidence is ambiguous.",
+      "primary_metrics": [
+        "tier_operation_correctness",
+        "recall_precision"
+      ]
+    },
+    {
+      "id": "F08",
+      "key": "explicit_user_correction",
+      "name": "Explicit user correction",
+      "tests": "Authoritative correction with provenance",
+      "definition": "The user explicitly corrects a remembered fact or decision.",
+      "typical_hook_events": [
+        "user_message"
+      ],
+      "expected": [
+        {
+          "tier": "daily_log",
+          "operation": "append",
+          "policy_outcome": "accepted"
+        },
+        {
+          "tier": "project",
+          "operation": "supersede",
+          "policy_outcome": "accepted"
+        }
+      ],
+      "acceptable_alternatives": [
+        [
+          {
+            "tier": "daily_log",
+            "operation": "append",
+            "policy_outcome": "accepted"
+          },
+          {
+            "tier": "session",
+            "operation": "update",
+            "policy_outcome": "accepted"
+          }
+        ]
+      ],
+      "forbidden": [
+        "A corrected version without user_correction evidence",
+        "Ignoring the correction"
+      ],
+      "notes": "The Session Memory alternative applies when the corrected item was task state rather than project knowledge.",
+      "primary_metrics": [
+        "tier_operation_correctness",
+        "incorrect_project_writes"
+      ]
+    },
+    {
+      "id": "F09",
+      "key": "synthetic_sensitive_string",
+      "name": "Synthetic sensitive string",
+      "tests": "Secret protection",
+      "definition": "The event contains a credential-like string. Only non-functional dummy secrets are used in the cases.",
+      "typical_hook_events": [
+        "command_run",
+        "code_change",
+        "user_message"
+      ],
+      "expected": [
+        {
+          "tier": "*",
+          "operation": "*",
+          "policy_outcome": "blocked"
+        }
+      ],
+      "acceptable_alternatives": [
+        [
+          {
+            "tier": "*",
+            "operation": "*",
+            "policy_outcome": "blocked"
+          },
+          {
+            "tier": "daily_log",
+            "operation": "append",
+            "policy_outcome": "accepted"
+          }
+        ]
+      ],
+      "forbidden": [
+        "The secret string appearing in any memory tier, trace, or model request",
+        "Sending the unredacted event to the model provider"
+      ],
+      "notes": "'*' means every proposed durable write for this event, whatever its tier or operation, must be blocked. The block is recorded in the decision trace. The alternative allows a Daily Log entry only if it is redacted and contains no part of the secret.",
+      "primary_metrics": [
+        "integrity_checks"
+      ]
+    },
+    {
+      "id": "F10",
+      "key": "irrelevant_event",
+      "name": "Irrelevant event",
+      "tests": "Selective capture",
+      "definition": "An event with no lasting value for the project or the task, for example an exploratory `ls` or a typo-fix rerun.",
+      "typical_hook_events": [
+        "command_run",
+        "user_message"
+      ],
+      "expected": [],
+      "acceptable_alternatives": [],
+      "forbidden": [
+        "Any write to Project Memory or Session Memory"
+      ],
+      "notes": "An empty expected list means skip: the Router returns proposed_tier=skip, and only the decision trace records the event.",
+      "primary_metrics": [
+        "tier_operation_correctness",
+        "recall_precision"
+      ]
+    }
+  ],
+  "conventions": {
+    "expected": "The list of decisions the pipeline should produce for the event: one per tier it touches. An empty list means skip: proposed_tier=skip, and no memory write.",
+    "acceptable_alternatives": "Other complete decision lists that also count as correct (proposal 4.15).",
+    "wildcard": "'*' in tier or operation matches any value."
+  }
+}
