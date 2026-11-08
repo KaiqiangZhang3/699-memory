@@ -92,3 +92,9 @@ The usage record already exists as `usage-v0` in code (`src/tiered_memory/usage.
 | D5 | Evidence format for the fixture | The Stage Two fixture (T06) must emit evidence that fits `evidence_ref`: pytest node IDs as `locator`, 40-character commit SHAs, and sha256 of the test output. | This becomes an acceptance check for T06. |
 
 **Staffing change (2026-11-08).** The project is now carried out by one person. Tasks the plans assigned to Ruifeng Cui (T06, T15, T21) and shared tasks (T04, T09, T18, T20, T22, T25) are now Kaiqiang's. This affects the plan in two places: the hours in the work plan, and the dual independent annotation required by proposal 4.14. Both are handled outside this document.
+
+## 7. Changes after `design-v1`
+
+| Date | Commit | Change | Reason |
+|---|---|---|---|
+| 2026-11-08 | `e2ccf3e` (T07) | Removed `superseded` from the Project Memory `status` enum. A version is superseded when a later version exists. | Version files are write-once (D1), so an old version's stored status can never be updated. Storing it would create two sources of truth. |
