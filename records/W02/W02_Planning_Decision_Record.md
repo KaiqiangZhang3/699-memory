@@ -12,6 +12,7 @@
 **Work completed.** Fill this in at the end of the week with evidence only:
 - [x] `design-v1` tag — commit hash: `58233053e90850ad4405840de04e5295059b824b` (92 tests pass; all 6 sample records validate)
 - [x] Event taxonomy and threat model — files: `docs/event_taxonomy_v1.md`, `cases/event_families_v1.json`, `docs/threat_model_v1.md`
+- [x] T06 Stage Two fixture skeleton — `fixtures/formal/taskservice`, initial commit `1ab718cd82983df7d39a5896e6ee2e7bf3f43aa3`, baseline 22/22 pass (`fixtures/baselines/formal__taskservice.json`). The pilot fixture is planned for T22.
 - [x] Prompt 7 audit completed (table below)
 - [x] Both plans submitted (T05 done; the student confirmed this on 2026-11-08). Date/channel: [TO CONFIRM]. Receipt kept at: [TO CONFIRM]
 

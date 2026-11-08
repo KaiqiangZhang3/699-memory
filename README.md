@@ -2,7 +2,7 @@
 
 Prototype for *Design and Evaluation of an Automated Three-Tier External Memory System for Long-Horizon Coding Agents* (CISC 699 Capstone II, Kaiqiang Zhang; GRAD 695 proposal, Sept 26, 2026).
 
-Status: **Week 1 skeleton (T02).** Only the usage logger and a disposable model call exist. The component packages are empty placeholders.
+Status: **`design-v1` + Stage Two fixture skeleton (T01–T06).** The component packages are still empty placeholders.
 
 ## Setup
 
@@ -23,6 +23,14 @@ export ANTHROPIC_API_KEY=...   # or: ant auth login
 
 This sends one request and appends one record to `runs/smoke/usage.jsonl`. A failed call is logged too. The settings used here (`claude-opus-5-5`, effort `low`, server-side refusal fallback on) are **not** the pinned study configuration. That configuration is decided under DEC-04 before the Week 5 pilot.
 
+## Stage Two fixture (T06)
+
+```bash
+.venv/bin/python scripts/fixture_baseline.py formal/taskservice
+```
+
+This builds a fresh git repo from the fixture source (with a fixed commit SHA), runs its tests, and records the result in `fixtures/baselines/` and `fixtures/manifest.json`. Rerun it whenever the fixture source changes; a test fails if the manifest is out of date.
+
 ## Layout
 
 | Path | Purpose | Task |
@@ -31,7 +39,8 @@ This sends one request and appends one record to `runs/smoke/usage.jsonl`. A fai
 | `src/tiered_memory/model_client.py` | Messages API wrapper; logs one record per call | T02 |
 | `src/tiered_memory/{memory,hooks,queue,curator,router,policy,review,maintenance,resume}/` | Components from proposal Table 5 | T07–T19 |
 | `schemas/v1/` | P/L/S JSON schemas | T03 |
-| `fixtures/pilot/`, `fixtures/formal/` | Kept separate (C02) | T06 (RC) |
+| `fixtures/formal/taskservice/` | Stage Two fixture (state before task T1); `manifest.json` records the commit SHA and the baseline | T06 |
+| `fixtures/pilot/` | Pilot fixture, kept separate from the formal one (C02); not built yet | T22 |
 | `cases/dev/`, `cases/formal/` | 12 development cases / 60 formal cases | T09, T18 |
 | `prompts/` | Versioned Curator/Router prompts | T11 |
 | `records/Wxx/` | Weekly short records | T32 |

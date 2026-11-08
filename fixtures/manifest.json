@@ -1,0 +1,37 @@
+{
+  "manifest_version": "fixtures-v1",
+  "rules": [
+    "Formal and pilot fixtures are kept in separate directories and never share tasks, hidden tests or memory (C02, proposal 4.14).",
+    "Every run starts from a fresh copy built by tiered_memory.fixture.build_fixture_repo; the initial commit SHA is fixed by the source tree.",
+    "Hidden acceptance tests (T21) live outside the fixture tree, so the coding agent never sees them; they are fixed and hashed before any condition runs."
+  ],
+  "fixtures": [
+    {
+      "path": "fixtures/formal/taskservice",
+      "role": "formal",
+      "stage": "Stage Two",
+      "description": "Task-management service: session-cookie auth, service layer, SQLite, pytest (proposal 4.5). State before task T1.",
+      "status": "skeleton",
+      "source_tree_hash": "sha256:f2cb2bed92b3dbe19d31fc96f68beb6908e8f2fdfc581cd7e2cddf1d26a177a5",
+      "initial_commit": "1ab718cd82983df7d39a5896e6ee2e7bf3f43aa3",
+      "baseline": {
+        "file": "fixtures/baselines/formal__taskservice.json",
+        "outcome": "pass",
+        "counts": {
+          "pass": 22,
+          "fail": 0,
+          "error": 0,
+          "skipped": 0
+        },
+        "recorded_at_utc": "2026-11-08T08:48:18.404+00:00"
+      }
+    },
+    {
+      "path": "fixtures/pilot",
+      "role": "pilot",
+      "stage": "Stage Two pilot sequence",
+      "description": "Separate fixture for the short pilot coding sequence (T22). It is not built yet; it must not reuse the formal tasks.",
+      "status": "planned"
+    }
+  ]
+}
