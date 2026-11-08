@@ -148,7 +148,7 @@ Hours are planning estimates for KZ only, based on similar GRAD 695 build work a
 | Completion check | Status | Evidence |
 |---|---|---|
 | Extraction checked against the proposal | Done | Verification note in §1 |
-| `pytest` runs | Done | 18 tests pass (`tiered-memory`, commit `dd8738e`) |
+| `pytest` runs | Done | 18 tests pass (`tiered-memory`, commit `a29bc1d`) |
 | One model call logged | **Deferred to end of Week 3** | Logger and call script are done; the failure path was verified (one `status: "error"` record). The live call is waiting for an API key. |
 
 **Deviation (T02).** The live model call is deferred because no API key is configured yet. No Week 1–3 task depends on a live model: T11 Curator tests use a deterministic test double, as proposal 5.5 allows. **New deadline:** configure the key and run `scripts/smoke_model_call.py` by the end of Week 3, then add the `status: "ok"` usage line here. **Risk R6 trigger:** no working key by the start of Week 4. This would also put DEC-04 (model pinned before the Week 5 pilot) at risk.

@@ -97,4 +97,4 @@ The usage record already exists as `usage-v0` in code (`src/tiered_memory/usage.
 
 | Date | Commit | Change | Reason |
 |---|---|---|---|
-| 2026-11-08 | `e2ccf3e` (T07) | Removed `superseded` from the Project Memory `status` enum. A version is superseded when a later version exists. | Version files are write-once (D1), so an old version's stored status can never be updated. Storing it would create two sources of truth. |
+| 2026-11-08 | `30e6b7f` (T07) | Removed `superseded` from the Project Memory `status` enum. A version is superseded when a later version exists. | Version files are write-once (D1), so an old version's stored status can never be updated. Storing it would create two sources of truth. |
